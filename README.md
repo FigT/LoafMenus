@@ -1,14 +1,22 @@
 # LoafMenus
 
 #### LoafMenus is a simplistic, yet powerful GUI API for Spigot. 
-Tested with 1.7.x, 1.8.x, feel free to test with other versions and let me know if it works.
 
-
-
+## Features
+* Easy to use, simplistic, but powerful
+* Lambdas!
+* Multi-version supported (tested w/ 1.7, 1.8, 1.14)
+* Set click & close handlers for each item
+* Includes examples
+* And much more already implemented (and [coming soon](https://github.com/FigT/LoafMenus/projects/1))!
 ## Installation
 
+#### Requirements
+* ##### Java 8
+* ##### Lombok (only for building/contributing yourself)
+
 #### Maven
-Recommended to relocate it to avoid conflicts with other plugins!
+Recommended to shade & relocate it to avoid conflicts with other plugins!
 
 ```xml
 	<repositories>
@@ -23,18 +31,19 @@ Recommended to relocate it to avoid conflicts with other plugins!
 	<dependency>
 	    <groupId>com.github.FigT</groupId>
 	    <artifactId>LoafMenus</artifactId>
-	    <version>1.0.0</version>
+	    <version>2.0.0</version>
 	</dependency>
 ```
 
 ## Usage
 
 #### Browse through the code or see the [examples here](https://github.com/FigT/LoafMenus/tree/master/src/main/java/us/figt/loafmenus/example).
-[More documentation with examples, coming soon]
+[More documentation coming soon]
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+#### [See TODO list here](https://github.com/FigT/LoafMenus/projects/1)
 
 ## License
 ### [Apache 2.0](https://choosealicense.com/licenses/apache-2.0/)

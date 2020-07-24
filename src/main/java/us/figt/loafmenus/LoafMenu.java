@@ -1,6 +1,23 @@
+/*
+ *    Copyright 2020 FigT
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package us.figt.loafmenus;
 
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,9 +25,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import us.figt.loafmenus.utils.StringUtil;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.function.Consumer;
 
 
 /**
@@ -19,10 +34,17 @@ import java.util.UUID;
 @Getter
 public abstract class LoafMenu {
 
+    private LoafMenuRegistrar loafMenuRegistrar;
+
+    @Setter
     private String name;
     private MenuRowSize rowSize;
+    private Player player;
+    private Inventory inventory;
+    @Setter
+    private Consumer<Player> closeHandler;
 
-    private Map<UUID, Inventory> currentlyOpenedInventories;
+    private LoafMenuItem[] internalItems;
 
     /**
      * Creates a LoafMenu with the specified name and size.
@@ -30,53 +52,75 @@ public abstract class LoafMenu {
      * @param name the name/title of the inventory (color codes '&' are supported)
      * @param size the size of the inventory
      */
-    public LoafMenu(String name, MenuRowSize size) {
+    public LoafMenu(@NonNull LoafMenuRegistrar loafMenuRegistrar, @NonNull String name, @NonNull MenuRowSize size, @NonNull Player player) {
+        this.loafMenuRegistrar = loafMenuRegistrar;
         this.name = name;
         this.rowSize = size;
-        this.currentlyOpenedInventories = new HashMap<>();
-    }
-
-    /**
-     * Creates a LoafMenu with the specified name and default chest inventory size.
-     *
-     * @param name the name/title of the inventory (color codes '&' are supported)
-     */
-    public LoafMenu(String name) {
-        this(name, MenuRowSize.THREE);
+        this.player = player;
+        this.inventory = Bukkit.createInventory(null, this.rowSize.getSize(), StringUtil.translateColors(this.name));
+        this.internalItems = new LoafMenuItem[this.rowSize.getSize()];
     }
 
 
-    public abstract LoafMenuItem[] getMenuItems(Player player);
+    protected abstract LoafMenuItem[] getMenuItems();
 
     /**
-     * Creates an inventory, sets items, adds to map, and opens inventory.
-     *
-     * @param player the player who wishes to open the inventory
+     * Creates inventory, sets items, adds to map, and opens inventory.
      */
-    public void open(Player player) {
-        LoafMenuItem[] items = getMenuItems(player);
+    public void open() {
+        // if the title has changed, create new inventory with that title
+        if (!StringUtil.equalsTranslateColors(this.inventory.getName(), this.name)) {
+            this.inventory = Bukkit.createInventory(null, this.rowSize.getSize(), StringUtil.translateColors(this.name));
+        }
 
-        // create inventory
-        Inventory inventory = Bukkit.getServer().createInventory(null, this.rowSize.getSize(), StringUtil.translateColors(this.name));
+
+        // store the abstract items in the internal items array
+        this.internalItems = getMenuItems();
 
         // set items
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] == null) {
-                items[i] = new LoafMenuItem(new ItemStack(Material.AIR));
+        for (int i = 0; i < this.internalItems.length; i++) {
+            if (this.internalItems[i] == null) {
+                this.internalItems[i] = new LoafMenuItem(new ItemStack(Material.AIR));
             }
 
-            inventory.setItem(i, items[i].getItemStack());
+            this.inventory.setItem(i, this.internalItems[i].getItemStack());
         }
 
         // open inventory
-        player.openInventory(inventory);
+        this.player.openInventory(this.inventory);
 
         // if contains, replace, else put
-        if (this.currentlyOpenedInventories.containsKey(player.getUniqueId())) {
-            this.currentlyOpenedInventories.replace(player.getUniqueId(), inventory);
+        if (this.loafMenuRegistrar.getOpenedLoafMenus().containsKey(this.player.getUniqueId())) {
+            this.loafMenuRegistrar.getOpenedLoafMenus().replace(this.player.getUniqueId(), this);
         } else {
-            this.currentlyOpenedInventories.put(player.getUniqueId(), inventory);
+            this.loafMenuRegistrar.getOpenedLoafMenus().put(this.player.getUniqueId(), this);
         }
+    }
+
+    /**
+     * Removes from map, closes inventory, and cleans up the LoafMenu's fields.
+     * NOTE: Call this method when closing a menu, do NOT use {@link org.bukkit.entity.Player#closeInventory()}!
+     */
+    public void close() {
+        // remove from map
+        this.loafMenuRegistrar.getOpenedLoafMenus().remove(this.player.getUniqueId());
+
+        // close inventory & clear inventory
+        this.player.closeInventory();
+        cleanup();
+    }
+
+    /**
+     * Cleans up this LoafMenu's fields (only used internally).
+     */
+    void cleanup() {
+        this.inventory.clear();
+
+        this.name = null;
+        this.rowSize = null;
+        this.player = null;
+        this.inventory = null;
+        this.internalItems = null;
     }
 
     /**
@@ -84,7 +128,7 @@ public abstract class LoafMenu {
      *
      * @return new LoafMenuItem array
      */
-    protected LoafMenuItem[] newArray() {
+    protected LoafMenuItem[] newLoafMenuItemArray() {
         return new LoafMenuItem[this.rowSize.getSize()];
     }
 
