@@ -15,6 +15,7 @@
  */
 package us.figt.loafmenus.example;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +30,29 @@ public class ExampleMenuCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            new ExampleMenu(player).open();
+
+            if (args.length < 1) {
+                player.sendMessage(ChatColor.RED + "Usage: /examplemenu <1:2:3:4>");
+                return true;
+            }
+
+            switch (args[0].toLowerCase().trim()) {
+                case "1":
+                    new ExampleMenu(player).open();
+                    break;
+                case "2":
+                    new RainbowExampleMenu(player).open();
+                    break;
+                case "3":
+                    new BoxExampleMenu(player).open();
+                    break;
+                case "4":
+                    new HopperExampleMenu(player).open();
+                    break;
+                default:
+                    player.sendMessage(ChatColor.RED + "Invalid menu example menu");
+                    break;
+            }
         }
         return true;
     }

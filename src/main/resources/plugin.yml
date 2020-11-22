@@ -2,7 +2,7 @@ name: LoafMenus
 version: ${project.version}
 main: us.figt.loafmenus.example.ExampleMenuPlugin
 authors: [FigT]
-description: Simplistic, yet powerful GUI API for Spigot.
+description: ${project.description}
 commands:
   examplemenu:
     usage: /<command>

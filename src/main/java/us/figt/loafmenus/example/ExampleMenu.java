@@ -40,7 +40,7 @@ public class ExampleMenu extends LoafMenu {
     }
 
     @Override
-    protected LoafMenuItem[] getMenuItems() {
+    public LoafMenuItem[] getMenuItems() {
         // newLoafMenuItemArray() is a small shortcut method
         LoafMenuItem[] array = newLoafMenuItemArray();
 
@@ -67,8 +67,8 @@ public class ExampleMenu extends LoafMenu {
         array[21] = test;
         array[23] = new LoafMenuItem(playerInfoItem);
 
-        // replace all air with cobblestone
-        replaceAll(array, Material.AIR, new ItemStack(Material.COBBLESTONE));
+        // replace all air with white stained glass pane
+        replaceAll(array, Material.AIR, new ItemStack(Material.STAINED_GLASS_PANE));
 
         return array;
     }

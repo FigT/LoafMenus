@@ -66,7 +66,7 @@ public class RainbowExampleMenu extends LoafMenu {
     }
 
     @Override
-    protected LoafMenuItem[] getMenuItems() {
+    public LoafMenuItem[] getMenuItems() {
         LoafMenuItem[] array = newLoafMenuItemArray();
 
         // replace all air with plain stained glass pane, with a custom ClickHandler

@@ -7,6 +7,7 @@
 * Lambdas!
 * Multi-version supported (tested w/ 1.7, 1.8, 1.14)
 * Set click & close handlers for each item
+* Multiple types of menus (different chest sizes, box & hopper inventories)
 * Includes examples
 * And much more already implemented (and [coming soon](https://github.com/FigT/LoafMenus/projects/1))!
 ## Installation
@@ -31,7 +32,7 @@ Recommended to shade & relocate it to avoid conflicts with other plugins!
 	<dependency>
 	    <groupId>com.github.FigT</groupId>
 	    <artifactId>LoafMenus</artifactId>
-	    <version>2.0.0</version>
+	    <version>2.1.0</version>
 	</dependency>
 ```
 

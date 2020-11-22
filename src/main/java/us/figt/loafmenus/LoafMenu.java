@@ -18,7 +18,6 @@ package us.figt.loafmenus;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -57,12 +56,12 @@ public abstract class LoafMenu {
         this.name = name;
         this.rowSize = size;
         this.player = player;
-        this.inventory = Bukkit.createInventory(null, this.rowSize.getSize(), StringUtil.translateColors(this.name));
+        this.inventory = this.rowSize.toInventory(null, StringUtil.translateColors(this.name));
         this.internalItems = new LoafMenuItem[this.rowSize.getSize()];
     }
 
 
-    protected abstract LoafMenuItem[] getMenuItems();
+    public abstract LoafMenuItem[] getMenuItems();
 
     /**
      * Creates inventory, sets items, adds to map, and opens inventory.
@@ -70,7 +69,7 @@ public abstract class LoafMenu {
     public void open() {
         // if the title has changed, create new inventory with that title
         if (!StringUtil.equalsTranslateColors(this.inventory.getName(), this.name)) {
-            this.inventory = Bukkit.createInventory(null, this.rowSize.getSize(), StringUtil.translateColors(this.name));
+            this.inventory = this.rowSize.toInventory(null, StringUtil.translateColors(this.name));
         }
 
 
@@ -128,7 +127,7 @@ public abstract class LoafMenu {
      *
      * @return new LoafMenuItem array
      */
-    protected LoafMenuItem[] newLoafMenuItemArray() {
+    public LoafMenuItem[] newLoafMenuItemArray() {
         return new LoafMenuItem[this.rowSize.getSize()];
     }
 
@@ -140,7 +139,7 @@ public abstract class LoafMenu {
      * @param loafMenuItem the LoafMenuItem to replace the Material with
      * @return the new (output) array with the Materials replaced
      */
-    protected LoafMenuItem[] replaceAll(LoafMenuItem[] array, Material material, LoafMenuItem loafMenuItem) {
+    public LoafMenuItem[] replaceAll(LoafMenuItem[] array, Material material, LoafMenuItem loafMenuItem) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == null) {
                 array[i] = new LoafMenuItem(new ItemStack(Material.AIR));
@@ -162,7 +161,7 @@ public abstract class LoafMenu {
      * @param itemStack the ItemStack to replace the Material with
      * @return the new (output) array with the Materials replaced
      */
-    protected LoafMenuItem[] replaceAll(LoafMenuItem[] array, Material material, ItemStack itemStack) {
+    public LoafMenuItem[] replaceAll(LoafMenuItem[] array, Material material, ItemStack itemStack) {
         return replaceAll(array, material, new LoafMenuItem(itemStack));
     }
 }
