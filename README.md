@@ -1,5 +1,8 @@
 # LoafMenus
 
+## This project is abandoned. I encourage you to use *[Zaiko](https://github.com/SakiPowered/zaiko)*, my new Spigot menu API.
+<br/>
+
 #### LoafMenus is a simplistic, yet powerful GUI API for Spigot. 
 
 ## Features
